@@ -1,5 +1,5 @@
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View, Alert } from "react-native";
 import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
@@ -7,24 +7,39 @@ import { useState } from "react";
 import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 
 export default function App() {
-  const [todoList, setTodoList] = useState([
-    { id: 1, title: "Walk the dog", isCompleted: true },
-    { id: 2, title: "Do my work", isCompleted: false },
-    { id: 3, title: "Learn React Native", isCompleted: false },
-    { id: 4, title: "Walk the dog", isCompleted: true },
-    { id: 5, title: "Do my work", isCompleted: false },
-    { id: 6, title: "Learn React Native", isCompleted: false },
-    { id: 7, title: "Walk the dog", isCompleted: true },
-    { id: 8, title: "Do my work", isCompleted: false },
-    { id: 9, title: "Learn React Native", isCompleted: false },
-  ]);
+  const [todoList, setTodoList] = useState([]);
 
-  const [selectedTabName, setSelectedTabName] = useState("inProgress");
+  const [selectedTabName, setSelectedTabName] = useState("all");
+
+  function getFilteredList() {
+    switch (selectedTabName) {
+      case "all":
+        return todoList;
+      case "inProgress":
+        return todoList.filter((todo) => todo.isCompleted === false);
+      case "done":
+        return todoList.filter((todo) => todo.isCompleted === true);
+    }
+  }
+  function deleteTodo(todoToDelete) {
+    Alert.alert("Delete list", "Are you sure?", [
+      {
+        text: "Cancel",
+        style: "Cancel",
+      },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () =>
+          setTodoList(todoList.filter((t) => t.id !== todoToDelete.id)),
+      },
+    ]);
+  }
 
   function renderTodoList() {
-    return todoList.map((todo) => (
+    return getFilteredList().map((todo) => (
       <View key={todo.id} style={s.cardItem}>
-        <CardTodo onPress={updateTodo} todo={todo} />
+        <CardTodo onLongPress={deleteTodo} onPress={updateTodo} todo={todo} />
       </View>
     ));
   }
@@ -56,6 +71,7 @@ export default function App() {
       </SafeAreaProvider>
       <View style={s.footer}>
         <TabBottomMenu
+          todoList={todoList}
           onPress={setSelectedTabName}
           selectedTabName={selectedTabName}
         />
