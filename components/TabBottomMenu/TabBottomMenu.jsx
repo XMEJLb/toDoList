@@ -13,7 +13,7 @@ export function TabBottomMenu({ selectedTabName, onPress, todoList }) {
       done: 0,
     }
   );
-  console.log(countByStatus);
+
   function getTextStyle(tabName) {
     return {
       fontWeight: "bold",
