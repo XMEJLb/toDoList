@@ -3,7 +3,7 @@ import { ScrollView, Text, View, Alert } from "react-native";
 import { s } from "./App.style";
 import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 import { AddButton } from "./components/AddButton/AddButton";
 import Dialog from "react-native-dialog";
@@ -18,6 +18,7 @@ export default function App() {
   const [selectedTabName, setSelectedTabName] = useState("all");
   const [isAddDialogDisplayed, setIsAddDialogDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const scrollViewRef = useRef();
 
   useEffect(() => {
     loadTodoList();
@@ -109,6 +110,9 @@ export default function App() {
     setTodoList([...todoList, newTodo]);
     setIsAddDialogDisplayed(false);
     setInputValue("");
+    setTimeout(() => {
+      scrollViewRef.current.scrollToEnd();
+    }, 300);
   }
 
   function renderAddDialog() {
@@ -145,7 +149,7 @@ export default function App() {
             <Header />
           </View>
           <View style={s.body}>
-            <ScrollView>{renderTodoList()}</ScrollView>
+            <ScrollView ref={scrollViewRef}>{renderTodoList()}</ScrollView>
           </View>
           <AddButton onPress={() => setIsAddDialogDisplayed(true)} />
         </SafeAreaView>
