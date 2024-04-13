@@ -42,7 +42,7 @@ export default function App() {
       const todoListString = await AsyncStorage.getItem("@todoList");
       const parsedTodoList = JSON.parse(todoListString);
       isloadUpdate = true;
-      setTodoList(parsedTodoList);
+      setTodoList(parsedTodoList || []);
     } catch (err) {
       alert("err");
     }
